@@ -88,7 +88,7 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
     // MARK: - Auth State
     
     @Published var authStateHandler: AuthStateDidChangeListenerHandle?
-    @Published var authState: AuthState = .loading
+    @Published public var authState: AuthState = .loading
     
     @MainActor
     func startListeningToAuthChanges() {
@@ -106,7 +106,7 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
     }
     
     @MainActor
-    func signOut() throws {
+    public func signOut() throws {
         try Auth.auth().signOut()
     }
     
