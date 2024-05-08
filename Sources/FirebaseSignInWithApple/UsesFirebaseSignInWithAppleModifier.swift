@@ -14,6 +14,12 @@ struct UsesFirebaseSignInWithAppleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.firebaseSignInWithApple, controller)
+            .onAppear {
+                controller.startListeningToAuthChanges()
+            }
+            .onDisappear {
+                controller.stopListeningToAuthChanges()
+            }
     }
 }
 

@@ -10,26 +10,18 @@ import SwiftUI
 public struct FirebaseSignInWithAppleButton: View {
     
     private var label: FirebaseSignInWithAppleButtonLabel
-    private var action: ((() -> Void) -> Void)?
     private var onCompletion: (Result<FirebaseSignInWithAppleResult, Error>) -> Void
     
     @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
     
-    public init(label: FirebaseSignInWithAppleButtonLabel, action: ((() -> Void) -> Void)? = nil, onCompletion: @escaping (Result<FirebaseSignInWithAppleResult, Error>) -> Void) {
+    public init(label: FirebaseSignInWithAppleButtonLabel, onCompletion: @escaping (Result<FirebaseSignInWithAppleResult, Error>) -> Void) {
         self.label = label
-        self.action = action
         self.onCompletion = onCompletion
     }
     
     public var body: some View {
         Button {
-            if let action {
-                action {
-                    firebaseSignInWithApple.continueWithApple(completion: onCompletion)
-                }
-            } else {
-                firebaseSignInWithApple.continueWithApple(completion: onCompletion)
-            }
+            firebaseSignInWithApple.continueWithApple(completion: onCompletion)
         } label: {
             switch label {
             case .signIn:

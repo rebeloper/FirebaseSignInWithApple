@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AuthenticationServices
+import FirebaseAuth
 
 final public class FirebaseSignInWithAppleController: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
@@ -25,6 +26,7 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
     
     @MainActor
     public func continueWithApple(completion: @escaping (Result<FirebaseSignInWithAppleResult, Error>) -> ()) {
+        authState = .authenticating
         
         self.onContinueWithApple = completion
         
@@ -82,5 +84,31 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
         return self.window!
     }
 #endif
+    
+    // MARK: - Auth State
+    
+    @Published var authStateHandler: AuthStateDidChangeListenerHandle?
+    @Published var authState: AuthState = .loading
+    
+    @MainActor
+    func startListeningToAuthChanges() {
+        authStateHandler = Auth.auth().addStateDidChangeListener { _, user in
+            if self.authState != .authenticating {
+                self.authState = user != nil ? .authenticated : .notAuthenticated
+            }
+        }
+    }
+    
+    @MainActor
+    func stopListeningToAuthChanges() {
+        guard authStateHandler != nil else { return }
+        Auth.auth().removeStateDidChangeListener(authStateHandler!)
+    }
+    
+    @MainActor
+    func signOut() throws {
+        try Auth.auth().signOut()
+    }
+    
 }
 
