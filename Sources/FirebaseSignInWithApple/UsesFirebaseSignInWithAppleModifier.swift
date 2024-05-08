@@ -13,13 +13,15 @@ struct UsesFirebaseSignInWithAppleModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .environment(\.firebaseSignInWithApple, controller)
             .onAppear {
-                controller.startListeningToAuthChanges()
+                DispatchQueue.main.async {
+                    controller.startListeningToAuthChanges()
+                }
             }
             .onDisappear {
                 controller.stopListeningToAuthChanges()
             }
-            .environment(\.firebaseSignInWithApple, controller)
     }
 }
 
