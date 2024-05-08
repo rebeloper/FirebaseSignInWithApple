@@ -98,6 +98,7 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
             print(self.authState)
             if self.authState != .authenticating {
                 self.authState = user != nil ? .authenticated : .notAuthenticated
+                print(self.authState)
             }
         }
     }
