@@ -92,20 +92,16 @@ final public class FirebaseSignInWithAppleController: NSObject, ASAuthorizationC
     public var authState: AuthState = .loading
     
     @MainActor
-    public func startListeningToAuthChanges() {
-        print("Started listening to auth changes...")
+    func startListeningToAuthChanges() {
         authStateHandler = Auth.auth().addStateDidChangeListener { _, user in
-            print("user: \(user)")
-            print(self.authState)
             if self.authState != .authenticating {
                 self.authState = user != nil ? .authenticated : .notAuthenticated
-                print(self.authState)
             }
         }
     }
     
     @MainActor
-    public func stopListeningToAuthChanges() {
+    func stopListeningToAuthChanges() {
         guard authStateHandler != nil else { return }
         Auth.auth().removeStateDidChangeListener(authStateHandler!)
     }
