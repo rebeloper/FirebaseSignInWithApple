@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UsesFirebaseSignInWithAppleModifier: ViewModifier {
     
-    @StateObject private var controller = FirebaseSignInWithAppleController()
+    @State private var controller = FirebaseSignInWithAppleController()
     
     func body(content: Content) -> some View {
         content

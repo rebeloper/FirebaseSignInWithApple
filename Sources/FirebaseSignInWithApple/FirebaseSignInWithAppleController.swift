@@ -9,7 +9,8 @@ import SwiftUI
 import AuthenticationServices
 import FirebaseAuth
 
-final public class FirebaseSignInWithAppleController: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+@Observable
+final public class FirebaseSignInWithAppleController: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     private var onContinueWithApple: ((Result<FirebaseSignInWithAppleResult, Error>) -> ())?
     fileprivate var currentNonce: String?
@@ -87,8 +88,8 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
     
     // MARK: - Auth State
     
-    @Published var authStateHandler: AuthStateDidChangeListenerHandle?
-    @Published public var authState: AuthState = .loading
+    var authStateHandler: AuthStateDidChangeListenerHandle?
+    public var authState: AuthState = .loading
     
     @MainActor
     public func startListeningToAuthChanges() {
