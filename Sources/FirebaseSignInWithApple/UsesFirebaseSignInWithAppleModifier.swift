@@ -15,9 +15,7 @@ struct UsesFirebaseSignInWithAppleModifier: ViewModifier {
         content
             .environment(\.firebaseSignInWithApple, controller)
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    controller.startListeningToAuthChanges()
-                }
+                controller.startListeningToAuthChanges()
             }
             .onDisappear {
                 controller.stopListeningToAuthChanges()
