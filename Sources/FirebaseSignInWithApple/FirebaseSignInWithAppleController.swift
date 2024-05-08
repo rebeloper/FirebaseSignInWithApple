@@ -94,6 +94,7 @@ final public class FirebaseSignInWithAppleController: NSObject, ObservableObject
     public func startListeningToAuthChanges() {
         print("Started listening to auth changes...")
         authStateHandler = Auth.auth().addStateDidChangeListener { _, user in
+            print("user: \(user)")
             if self.authState != .authenticating {
                 self.authState = user != nil ? .authenticated : .notAuthenticated
             }
