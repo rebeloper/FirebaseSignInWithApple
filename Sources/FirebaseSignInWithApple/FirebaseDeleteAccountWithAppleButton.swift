@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
+public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     
     @Environment(\.firebaseAuth) private var firebaseAuth
     
