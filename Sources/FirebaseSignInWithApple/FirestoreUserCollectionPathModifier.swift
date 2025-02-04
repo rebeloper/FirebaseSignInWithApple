@@ -31,9 +31,9 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
 }
 
 public extension View {
-    /// Sets up FirebaseAuthSwiftUI and the collection path to the user documents in Firestore. Put this onto the root of your app
+    /// Sets up FirebaseSignInWithAppl and the collection path to the user documents in Firestore. Put this onto the root of your app
     /// - Parameter path: the collection path to the user documents in Firestore
-    func configureFirebaseAuthSwiftUIWith(firestoreUserCollectionPath path: String) -> some View {
+    func configureFirebaseSignInWithAppleWith(firestoreUserCollectionPath path: String) -> some View {
         modifier(FirestoreUserCollectionPathModifier(path: path))
     }
 }
