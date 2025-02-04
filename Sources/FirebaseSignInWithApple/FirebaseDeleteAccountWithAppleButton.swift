@@ -62,7 +62,6 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     private func deleteAccount() {
         Task {
             do {
-                print("deleteAccount")
                 try await firebaseAuth.deleteAccount()
             } catch {
                 onError?(error)
