@@ -1,50 +1,33 @@
 //
 //  FirebaseSignInWithAppleButton.swift
+//  Carrrds
 //
-//
-//  Created by Alex Nagy on 08.05.2024.
+//  Created by Alex Nagy on 03.02.2025.
 //
 
 import SwiftUI
 
-public struct FirebaseSignInWithAppleButton: View {
+public struct FirebaseSignInWithAppleButton<Label: View>: View {
     
-    private var label: FirebaseSignInWithAppleButtonLabel
-    private var onCompletion: (Result<FirebaseSignInWithAppleResult, Error>) -> Void
+    @Environment(\.firebaseAuth) private var firebaseAuth
     
-    @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
+    @ViewBuilder var label: () -> Label
+    let onError: ((Error?) -> Void)?
     
-    public init(label: FirebaseSignInWithAppleButtonLabel, onCompletion: @escaping (Result<FirebaseSignInWithAppleResult, Error>) -> Void) {
+    /// Signs in the user to Firebase Auth with Sign in with Apple
+    /// - Parameters:
+    ///   - label: the button label
+    ///   - onError: completion handler that receives an optinal error if one occoured
+    public init(@ViewBuilder label: @escaping () -> Label, onError: ((Error?) -> Void)? = nil) {
         self.label = label
-        self.onCompletion = onCompletion
+        self.onError = onError
     }
     
     public var body: some View {
         Button {
-            firebaseSignInWithApple.continueWithApple(completion: onCompletion)
+            firebaseAuth.continueWithApple(.createToken, onError: onError)
         } label: {
-            switch label {
-            case .signIn:
-                Label("Sign in with Apple", systemImage: "applelogo")
-            case .signUp:
-                Label("Sign up with Apple", systemImage: "applelogo")
-            case .continueWithApple:
-                Label("Continue with Apple", systemImage: "applelogo")
-            case .custom(let text):
-                Label(text, systemImage: "applelogo")
-            }
+            label()
         }
-        .buttonStyle(.plain)
-        .padding(.vertical, 14)
-        .padding(.horizontal, 18)
-        .bold()
-        .foregroundColor(.white)
-        .background {
-            Color.black
-        }
-        .cornerRadius(6)
     }
-    
 }
-
-
