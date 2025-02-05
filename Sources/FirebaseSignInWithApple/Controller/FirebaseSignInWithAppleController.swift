@@ -77,8 +77,8 @@ final public class FirebaseSignInWithAppleController: NSObject {
     private func saveProfileIfNeeded(_ user: User, path: String) {
         Task {
             do {
-                let isNewUser = try await FirebaseSignInWithAppleUtils.isNewUserInFirestore(path: path, uid: user.uid)
-                if !isNewUser {
+                let isUserAlreadyInFirestore = try await FirebaseSignInWithAppleUtils.isUserAlreadyInFirestore(path: path, uid: user.uid)
+                if isUserAlreadyInFirestore {
                     self.state = .authenticated
                 } else {
                     try await saveProfile(user, path: path)

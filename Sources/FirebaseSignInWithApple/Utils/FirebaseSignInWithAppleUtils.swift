@@ -13,14 +13,14 @@ import FirebaseFirestore
 
 struct FirebaseSignInWithAppleUtils {
     
-    static func isNewUserInFirestore(path: String, uid: String) async throws -> Bool {
+    static func isUserAlreadyInFirestore(path: String, uid: String) async throws -> Bool {
         do {
             let reference = Firestore.firestore().collection(path)
             try await reference.document(uid).getDocument()
             return true
         } catch {
             if let error = error as NSError?, let code = FirestoreErrorCode.Code(rawValue: error.code) {
-                if code == .alreadyExists {
+                if code == .notFound {
                     return false
                 } else {
                     throw error
