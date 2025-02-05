@@ -8,5 +8,5 @@
 import SwiftUI
 
 public extension EnvironmentValues {
-    @Entry var firebaseAuth = FirebaseAuthController()
+    @Entry var firebaseSignInWithApple = FirebaseSignInWithAppleController()
 }

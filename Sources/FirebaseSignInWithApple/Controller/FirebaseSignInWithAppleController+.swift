@@ -1,5 +1,5 @@
 //
-//  FirebaseAuthController+.swift
+//  FirebaseSignInWithAppleController+.swift
 //
 //
 //  Created by Alex Nagy on 08.05.2024.
@@ -8,7 +8,7 @@
 import SwiftUI
 import AuthenticationServices
 
-extension FirebaseAuthController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+extension FirebaseSignInWithAppleController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     // MARK: - ASAuthorizationControllerDelegate
     

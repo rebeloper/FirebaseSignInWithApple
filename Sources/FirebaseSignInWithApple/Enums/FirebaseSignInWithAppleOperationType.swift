@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum FirebaseSignInWithAppleOperationType {
+enum FirebaseSignInWithAppleOperationType {
     case createToken
     case revokeToken
 }

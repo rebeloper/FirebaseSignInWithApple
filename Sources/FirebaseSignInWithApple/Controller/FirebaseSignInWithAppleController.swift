@@ -11,12 +11,24 @@ import FirebaseAuth
 import FirebaseFirestore
 
 @Observable
-final public class FirebaseAuthController: NSObject {
+final public class FirebaseSignInWithAppleController: NSObject {
     
     // MARK: Public
     
-    public var state: AuthState = .loading
+    public var state: FirebaseSignInWithAppleAuthState = .loading
     public var user: User?
+    
+    public func authenticate() async throws {
+        try await continueWithApple(.createToken)
+    }
+    
+    public func signOut() throws {
+        try Auth.auth().signOut()
+    }
+    
+    public func deleteAccount() async throws {
+        try await continueWithApple(.revokeToken)
+    }
     
     // MARK: - Internal
     
@@ -55,16 +67,30 @@ final public class FirebaseAuthController: NSObject {
         }
     }
     
-    func signOut() throws {
-        try Auth.auth().signOut()
+    func signOut(onError: ((Error?) -> Void)? = nil) {
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            onError?(error)
+        }
     }
     
-    func deleteAccount() async throws {
+    func deleteFirebaseAccount() async throws {
         guard let user = Auth.auth().currentUser else {
             throw FirebaseSignInWithAppleError.noCurrentUser
         }
         try await user.delete()
         state = .notAuthenticated
+    }
+    
+    func deleteFirebaseAccount(onError: ((Error?) -> Void)? = nil) {
+        Task {
+            do {
+                try await deleteFirebaseAccount()
+            } catch {
+                onError?(error)
+            }
+        }
     }
     
     func startListeningToAuthChanges(path: String) {
@@ -74,7 +100,7 @@ final public class FirebaseAuthController: NSObject {
                 self.state = user != nil ? .authenticated : .notAuthenticated
             }
             if let user {
-                FirebaseAuthUtils.isNewUserInFirestore(path: path, uid: user.uid) { result in
+                FirebaseSignInWithAppleUtils.isNewUserInFirestore(path: path, uid: user.uid) { result in
                     switch result {
                     case .success(let isNew):
                         if !isNew {
@@ -170,10 +196,14 @@ final public class FirebaseAuthController: NSObject {
     private func revokeToken(authorizationCodeString: String, onError: ((Error?) -> Void)?) {
         Auth.auth().revokeToken(withAuthorizationCode: authorizationCodeString) { error in
             if let error {
+                self.signOut { error in
+                    onError?(error)
+                }
+                self.state = .notAuthenticated
                 onError?(error)
                 return
             }
-            onError?(nil)
+            self.deleteFirebaseAccount(onError: onError)
         }
     }
 }

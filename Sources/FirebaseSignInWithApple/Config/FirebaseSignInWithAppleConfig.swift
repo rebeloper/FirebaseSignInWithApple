@@ -1,5 +1,5 @@
 //
-//  FirestoreUserCollectionPathModifier.swift
+//  FirebaseSignInWithAppleConfig.swift
 //
 //
 //  Created by Alex Nagy on 08.05.2024.
@@ -10,7 +10,7 @@ import FirebaseAuth
 
 struct FirestoreUserCollectionPathModifier: ViewModifier {
     
-    @State private var controller = FirebaseAuthController()
+    @State private var controller = FirebaseSignInWithAppleController()
     
     private let path: String
     
@@ -20,7 +20,7 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .environment(\.firebaseAuth, controller)
+            .environment(\.firebaseSignInWithApple, controller)
             .onAppear {
                 controller.startListeningToAuthChanges(path: path)
             }
@@ -31,7 +31,7 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
 }
 
 public extension View {
-    /// Sets up FirebaseSignInWithAppl and the collection path to the user documents in Firestore. Put this onto the root of your app
+    /// Sets up FirebaseSignInWithApple and the collection path to the user documents in Firestore. Put this onto the root of your app
     /// - Parameter path: the collection path to the user documents in Firestore
     func configureFirebaseSignInWithAppleWith(firestoreUserCollectionPath path: String) -> some View {
         modifier(FirestoreUserCollectionPathModifier(path: path))

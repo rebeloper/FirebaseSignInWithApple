@@ -8,5 +8,5 @@
 import Foundation
 
 public enum FirebaseSignInWithAppleLabelType: Equatable {
-    case signIn, signUp, continueWithApple, custom(text: String), signOut, deleteAccount
+    case signIn, signUp, continueWithApple, signOut, deleteAccount, custom(text: String)
 }

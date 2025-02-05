@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     
-    @Environment(\.firebaseAuth) private var firebaseAuth
+    @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
     
     let alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration
     @ViewBuilder var label: () -> Label
@@ -38,7 +38,7 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
         }
         .alert(alertConfiguration.title, isPresented: $isAlertPresented) {
             Button(alertConfiguration.confirmButtonTitle, role: .destructive) {
-                revokeToken()
+                deleteAccount()
             }
             Button(alertConfiguration.cancelButtonTitle, role: .cancel) {
                 
@@ -48,33 +48,13 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
         }
     }
     
-    private func revokeToken() {
-        firebaseAuth.continueWithApple(.revokeToken) { error in
-            if let error {
-                signOut()
-                onError?(error)
-                return
-            }
-            deleteAccount()
-        }
-    }
-    
     private func deleteAccount() {
         Task {
             do {
-                try await firebaseAuth.deleteAccount()
+                try await firebaseSignInWithApple.deleteAccount()
             } catch {
                 onError?(error)
             }
-        }
-    }
-    
-    private func signOut() {
-        do {
-            try firebaseAuth.signOut()
-            self.firebaseAuth.state = .notAuthenticated
-        } catch {
-            onError?(error)
         }
     }
 }

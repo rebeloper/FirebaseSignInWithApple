@@ -27,12 +27,12 @@ public struct FirebaseSignInWithAppleLabel: View {
             title = "Sign up with Apple"
         case .continueWithApple:
             title = "Continue with Apple"
-        case .custom(let text):
-            title = text
         case .signOut:
             title = "Sign out with Apple"
         case .deleteAccount:
             title = "Delete account with Apple"
+        case .custom(let text):
+            title = text
         }
     }
     

@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct FirebaseSignOutWithAppleButton<Label: View>: View {
     
-    @Environment(\.firebaseAuth) private var firebaseAuth
+    @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
     
     let alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration
     @ViewBuilder var label: () -> Label
@@ -50,7 +50,7 @@ public struct FirebaseSignOutWithAppleButton<Label: View>: View {
     
     private func signOut() {
         do {
-            try firebaseAuth.signOut()
+            try firebaseSignInWithApple.signOut()
         } catch {
             onError?(error)
         }

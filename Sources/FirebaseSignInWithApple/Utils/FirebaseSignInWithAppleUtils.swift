@@ -9,8 +9,24 @@ import Foundation
 import AuthenticationServices
 import CryptoKit
 import FirebaseAuth
+import FirebaseFirestore
 
-public struct FirebaseSignInWithAppleUtils {
+struct FirebaseSignInWithAppleUtils {
+    
+    static func isNewUserInFirestore(path: String, uid: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let reference = Firestore.firestore().collection(path)
+        reference.document(uid).getDocument { _, error in
+            if let error = error as NSError?, let code = FirestoreErrorCode.Code(rawValue: error.code) {
+                if code == .alreadyExists {
+                    completion(.success(false))
+                } else {
+                    completion(.failure(error))
+                }
+            } else {
+                completion(.success(true))
+            }
+        }
+    }
     
     // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
     static func randomNonceString(length: Int = 32) -> String {

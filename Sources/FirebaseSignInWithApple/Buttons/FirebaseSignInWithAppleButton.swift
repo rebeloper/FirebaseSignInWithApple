@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct FirebaseSignInWithAppleButton<Label: View>: View {
     
-    @Environment(\.firebaseAuth) private var firebaseAuth
+    @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
     
     @ViewBuilder var label: () -> Label
     let onError: ((Error?) -> Void)?
@@ -25,9 +25,19 @@ public struct FirebaseSignInWithAppleButton<Label: View>: View {
     
     public var body: some View {
         Button {
-            firebaseAuth.continueWithApple(.createToken, onError: onError)
+            firebaseSignInWithApple.continueWithApple(.createToken, onError: onError)
         } label: {
             label()
+        }
+    }
+    
+    private func continueWithApple() {
+        Task {
+            do {
+                try await firebaseSignInWithApple.authenticate()
+            } catch {
+                onError?(error)
+            }
         }
     }
 }
