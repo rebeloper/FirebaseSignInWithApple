@@ -16,6 +16,7 @@ struct FirebaseSignInWithAppleUtils {
     static func isUserAlreadyInFirestore(path: String, uid: String) async throws -> Bool {
         do {
             let reference = Firestore.firestore().collection(path)
+            print(">>> fetching user from firestore at uid: \(uid)")
             let snapshot = try await reference.document(uid).getDocument()
             print(">>> snapshot exists: \(snapshot.exists)")
             return snapshot.exists
