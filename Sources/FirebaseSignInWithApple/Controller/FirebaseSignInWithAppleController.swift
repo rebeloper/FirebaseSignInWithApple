@@ -177,7 +177,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
     
     private func saveProfile(_ user: User, path: String, onError: ((Error?) -> Void)?) {
         let reference = Firestore.firestore().collection(path).document(user.uid)
-        reference.setData(["uid" : user.uid], completion: onError)
+        reference.setData(["userUid" : user.uid], completion: onError)
     }
     
     private func signInToFirebase(idTokenString: String, nonce: String, onError: ((Error?) -> Void)?) {
