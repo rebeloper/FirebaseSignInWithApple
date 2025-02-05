@@ -16,6 +16,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
     // MARK: Public
     
     public var state: FirebaseSignInWithAppleAuthState = .loading
+    public var previousState: FirebaseSignInWithAppleAuthState = .loading
     public var user: User?
     
     public func authenticate() {
@@ -56,6 +57,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
     var currentNonce: String?
     
     func continueWithApple(_ operationType: FirebaseSignInWithAppleOperationType) {
+        previousState = state
         state = .authenticating
         self.operationType = operationType
         

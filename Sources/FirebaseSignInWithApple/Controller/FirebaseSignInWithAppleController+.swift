@@ -26,7 +26,7 @@ extension FirebaseSignInWithAppleController: ASAuthorizationControllerDelegate, 
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         if let error = error as? ASAuthorizationError {
             if error.code == .canceled {
-                state = .authenticated
+                state = previousState
             } else {
                 state = .notAuthenticated
             }
