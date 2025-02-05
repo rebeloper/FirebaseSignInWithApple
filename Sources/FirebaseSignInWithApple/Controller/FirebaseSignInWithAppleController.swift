@@ -96,11 +96,15 @@ final public class FirebaseSignInWithAppleController: NSObject {
         Task {
             do {
                 let isUserAlreadyInFirestore = try await FirebaseSignInWithAppleUtils.isUserAlreadyInFirestore(path: path, uid: user.uid)
+                print(">>> is user already in firestore: \(isUserAlreadyInFirestore)")
                 if isUserAlreadyInFirestore {
                     self.state = .authenticated
+                    print(">>> state set to authenticated")
                 } else {
                     try await saveProfile(user, path: path)
+                    print(">>> profile saved: \(user.uid)")
                     self.state = .authenticated
+                    print(">>> state set to authenticated")
                 }
             } catch {
                 self.state = .notAuthenticated

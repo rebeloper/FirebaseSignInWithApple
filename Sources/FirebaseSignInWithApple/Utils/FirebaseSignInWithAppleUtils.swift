@@ -16,11 +16,13 @@ struct FirebaseSignInWithAppleUtils {
     static func isUserAlreadyInFirestore(path: String, uid: String) async throws -> Bool {
         do {
             let reference = Firestore.firestore().collection(path)
-            try await reference.document(uid).getDocument()
-            return true
+            let snapshot = try await reference.document(uid).getDocument()
+            print(">>> snapshot exists: \(snapshot.exists)")
+            return snapshot.exists
         } catch {
             if let error = error as NSError?, let code = FirestoreErrorCode.Code(rawValue: error.code) {
                 if code == .notFound {
+                    print(">>> document not found")
                     return false
                 } else {
                     throw error
