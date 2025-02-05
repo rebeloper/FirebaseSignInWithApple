@@ -83,6 +83,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
                     self.state = .authenticated
                 } else {
                     try await saveProfile(user, path: path)
+                    self.state = .authenticated
                 }
             } catch {
                 self.state = .notAuthenticated
