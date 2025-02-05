@@ -31,7 +31,23 @@ final public class FirebaseSignInWithAppleController: NSObject {
     }
     
     public func deleteAccount() {
-        continueWithApple(.revokeToken)
+        do {
+            guard let user = Auth.auth().currentUser else {
+                throw FirebaseSignInWithAppleError.noCurrentUser
+            }
+            guard let lastAuthenticationDate = user.metadata.lastSignInDate else {
+                throw FirebaseSignInWithAppleError.noCurrentUserLastSignInDate
+            }
+            let needsReauthentication = !lastAuthenticationDate.isWithinPast(minutes: 1)
+            
+            if needsReauthentication {
+                continueWithApple(.reauthenticateAndRevokeToken)
+            } else {
+                continueWithApple(.revokeToken)
+            }
+        } catch {
+            NotificationCenter.post(error: error)
+        }
     }
     
     // MARK: - Internal
@@ -119,6 +135,21 @@ final public class FirebaseSignInWithAppleController: NSObject {
             }
             try await signInToFirebase(idTokenString: idTokenString, nonce: nonce)
             
+        case .reauthenticateAndRevokeToken:
+            guard let user = Auth.auth().currentUser else {
+                throw FirebaseSignInWithAppleError.noCurrentUser
+            }
+            guard let nonce = currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                throw FirebaseSignInWithAppleError.noIdentityToken
+            }
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                throw FirebaseSignInWithAppleError.noTokenString
+            }
+            try await reauthenticateAndRevokeToken(user, idTokenString: idTokenString, nonce: nonce)
+            
         case .revokeToken:
             guard let authorizationCode = appleIDCredential.authorizationCode,
                let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) else {
@@ -141,6 +172,13 @@ final public class FirebaseSignInWithAppleController: NSObject {
     private func signInToFirebase(idTokenString: String, nonce: String) async throws {
         let credential = OAuthProvider.credential(providerID: .apple, idToken: idTokenString, rawNonce: nonce)
         try await Auth.auth().signIn(with: credential)
+    }
+    
+    private func reauthenticateAndRevokeToken(_ user: User, idTokenString: String, nonce: String) async throws {
+        let credential = OAuthProvider.credential(providerID: .apple, idToken: idTokenString, rawNonce: nonce)
+        try await user.reauthenticate(with: credential)
+        print(#function, "reauthenticated")
+//        continueWithApple(.revokeToken)
     }
     
     private func revokeToken(authorizationCodeString: String) async throws {
