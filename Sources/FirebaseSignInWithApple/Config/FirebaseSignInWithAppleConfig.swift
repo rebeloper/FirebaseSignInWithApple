@@ -11,6 +11,8 @@ import FirebaseAuth
 struct FirestoreUserCollectionPathModifier: ViewModifier {
     
     @State private var controller = FirebaseSignInWithAppleController()
+    @State private var isErrorAlertPresented = false
+    @State private var errorMessage: String = ""
     
     private let path: String
     
@@ -27,7 +29,19 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
             .onDisappear {
                 controller.stopListeningToAuthChanges()
             }
-            
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.firebaseSignInWithAppleError)) { object in
+                guard let error = object.object as? Error else { return }
+                errorMessage = error.localizedDescription
+                isErrorAlertPresented = true
+            }
+            .alert("Error", isPresented: $isErrorAlertPresented) {
+                Button("OK") {
+                    errorMessage = ""
+                }
+            } message: {
+                Text(errorMessage)
+            }
+
     }
 }
 
@@ -36,24 +50,5 @@ public extension View {
     /// - Parameter path: the collection path to the user documents in Firestore
     func configureFirebaseSignInWithAppleWith(firestoreUserCollectionPath path: String) -> some View {
         modifier(FirestoreUserCollectionPathModifier(path: path))
-    }
-}
-
-struct OnReceiveFirebaseSignInWithAppleErrorNotificationModifier: ViewModifier {
-    
-    let completion: (Error) -> Void
-    
-    func body(content: Content) -> some View {
-        content
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.firebaseSignInWithAppleError)) { object in
-                guard let error = object.object as? Error else { return }
-                completion(error)
-            }
-    }
-}
-
-public extension View {
-    func onFirebaseSignInWithAppleError(_ completion: @escaping (Error) -> Void) -> some View {
-        modifier(OnReceiveFirebaseSignInWithAppleErrorNotificationModifier(completion: completion))
     }
 }

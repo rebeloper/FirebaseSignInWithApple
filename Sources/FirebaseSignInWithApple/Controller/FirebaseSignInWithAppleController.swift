@@ -66,11 +66,10 @@ final public class FirebaseSignInWithAppleController: NSObject {
     func startListeningToAuthChanges(path: String) {
         authStateHandler = Auth.auth().addStateDidChangeListener { _, user in
             self.user = user
-            if self.state != .authenticating {
-                self.state = user != nil ? .authenticated : .notAuthenticated
-            }
             if let user {
                 self.saveProfileIfNeeded(user, path: path)
+            } else {
+                self.state = .notAuthenticated
             }
         }
     }
