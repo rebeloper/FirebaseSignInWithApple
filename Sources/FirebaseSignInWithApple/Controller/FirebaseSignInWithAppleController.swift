@@ -103,8 +103,10 @@ final public class FirebaseSignInWithAppleController: NSObject {
                 } else {
                     try await saveProfile(user, path: path)
                     print(">>> profile saved: \(user.uid)")
-                    self.state = .authenticated
-                    print(">>> state set to authenticated")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.state = .authenticated // TODO: - not working
+                        print(">>> state set to authenticated")
+                    }
                 }
             } catch {
                 self.state = .notAuthenticated
