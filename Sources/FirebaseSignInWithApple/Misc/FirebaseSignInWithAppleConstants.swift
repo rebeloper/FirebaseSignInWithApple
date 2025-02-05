@@ -8,5 +8,5 @@
 import Foundation
 
 public struct FirebaseSignInWithAppleConstants {
-    public static let reauthenticationIsRequiredAfterMinutes = 1
+    public static let reauthenticationIsRequiredAfterMinutes = 5
 }
