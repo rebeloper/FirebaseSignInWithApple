@@ -29,9 +29,9 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
             .onDisappear {
                 controller.stopListeningToAuthChanges()
             }
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.firebaseSignInWithAppleError)) { object in
-                guard let error = object.object as? FirebaseSignInWithAppleError else { return }
-                errorMessage = error.localizedDescription
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.firebaseSignInWithAppleError)) { notification in
+                guard let object = notification.object as? String else { return }
+                errorMessage = object
                 isErrorAlertPresented = true
             }
             .alert("Error", isPresented: $isErrorAlertPresented) {
