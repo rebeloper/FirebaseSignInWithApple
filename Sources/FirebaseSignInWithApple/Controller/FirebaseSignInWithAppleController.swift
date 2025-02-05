@@ -38,7 +38,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
             guard let lastAuthenticationDate = user.metadata.lastSignInDate else {
                 throw FirebaseSignInWithAppleError.noCurrentUserLastSignInDate
             }
-            let needsReauthentication = !lastAuthenticationDate.isWithinPast(minutes: 1)
+            let needsReauthentication = !lastAuthenticationDate.isWithinPast(minutes: FirebaseSignInWithAppleConstants.reauthenticationIsRequiredAfterMinutes)
             
             if needsReauthentication {
                 continueWithApple(.reauthenticateAndRevokeToken)
@@ -148,8 +148,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
             guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
                 throw FirebaseSignInWithAppleError.noTokenString
             }
-            try await reauthenticateAndRevokeToken(user, idTokenString: idTokenString, nonce: nonce)
-            
+            try await reauthenticateAndRevokeToken(user, idTokenString: idTokenString, nonce: nonce, appleIDCredential: appleIDCredential)
         case .revokeToken:
             guard let authorizationCode = appleIDCredential.authorizationCode,
                let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) else {
@@ -174,11 +173,15 @@ final public class FirebaseSignInWithAppleController: NSObject {
         try await Auth.auth().signIn(with: credential)
     }
     
-    private func reauthenticateAndRevokeToken(_ user: User, idTokenString: String, nonce: String) async throws {
+    private func reauthenticateAndRevokeToken(_ user: User, idTokenString: String, nonce: String, appleIDCredential: ASAuthorizationAppleIDCredential) async throws {
         let credential = OAuthProvider.credential(providerID: .apple, idToken: idTokenString, rawNonce: nonce)
         try await user.reauthenticate(with: credential)
-        print(#function, "reauthenticated")
-//        continueWithApple(.revokeToken)
+        
+        guard let authorizationCode = appleIDCredential.authorizationCode,
+           let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) else {
+            throw FirebaseSignInWithAppleError.noAuthorizationCodeString
+        }
+        try await revokeToken(authorizationCodeString: authorizationCodeString)
     }
     
     private func revokeToken(authorizationCodeString: String) async throws {
