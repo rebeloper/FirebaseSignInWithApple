@@ -13,7 +13,6 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     
     let alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration
     @ViewBuilder var label: () -> Label
-    let onError: ((Error) -> Void)?
     
     /// Deletes the user from Firebase Auth and Sign in with Apple
     /// - Parameters:
@@ -21,11 +20,9 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     ///   - label: the button label
     ///   - onError: completion handler that receives an error if one occoured
     public init(alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration = FirebaseSignInWithAppleButtonAlertConfiguration(title: "Delete account", message: "This action cannot be undone. All your data will be deleted.\n\nThis is a security sensitive operation. You will be asked to sign in again before we can delete your account.\n\nAre you sure you want to delete your account?", confirmButtonTitle: "Confirm", cancelButtonTitle: "Cancel"),
-                @ViewBuilder label: @escaping () -> Label,
-                onError: ((Error) -> Void)? = nil) {
+                @ViewBuilder label: @escaping () -> Label) {
         self.alertConfiguration = alertConfiguration
         self.label = label
-        self.onError = onError
     }
     
     @State private var isAlertPresented = false
@@ -38,23 +35,13 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
         }
         .alert(alertConfiguration.title, isPresented: $isAlertPresented) {
             Button(alertConfiguration.confirmButtonTitle, role: .destructive) {
-                deleteAccount()
+                firebaseSignInWithApple.deleteAccount()
             }
             Button(alertConfiguration.cancelButtonTitle, role: .cancel) {
                 
             }
         } message: {
             Text(alertConfiguration.message)
-        }
-    }
-    
-    private func deleteAccount() {
-        Task {
-            do {
-                try await firebaseSignInWithApple.deleteAccount()
-            } catch {
-                onError?(error)
-            }
         }
     }
 }

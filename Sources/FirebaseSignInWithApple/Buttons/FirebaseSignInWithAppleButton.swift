@@ -12,32 +12,19 @@ public struct FirebaseSignInWithAppleButton<Label: View>: View {
     @Environment(\.firebaseSignInWithApple) private var firebaseSignInWithApple
     
     @ViewBuilder var label: () -> Label
-    let onError: ((Error?) -> Void)?
     
     /// Signs in the user to Firebase Auth with Sign in with Apple
     /// - Parameters:
     ///   - label: the button label
-    ///   - onError: completion handler that receives an optinal error if one occoured
-    public init(@ViewBuilder label: @escaping () -> Label, onError: ((Error?) -> Void)? = nil) {
+    public init(@ViewBuilder label: @escaping () -> Label) {
         self.label = label
-        self.onError = onError
     }
     
     public var body: some View {
         Button {
-            firebaseSignInWithApple.continueWithApple(.createToken, onError: onError)
+            firebaseSignInWithApple.authenticate()
         } label: {
             label()
-        }
-    }
-    
-    private func continueWithApple() {
-        Task {
-            do {
-                try await firebaseSignInWithApple.authenticate()
-            } catch {
-                onError?(error)
-            }
         }
     }
 }

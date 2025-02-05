@@ -13,12 +13,19 @@ extension FirebaseSignInWithAppleController: ASAuthorizationControllerDelegate, 
     // MARK: - ASAuthorizationControllerDelegate
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        createToken(from: authorization, currentNonce: currentNonce, onError: onError)
+        Task {
+            do {
+                try await createToken(from: authorization, currentNonce: currentNonce)
+            } catch {
+                state = .notAuthenticated
+                NotificationCenter.post(error: error)
+            }
+        }
     }
     
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         state = .notAuthenticated
-        onError?(error)
+        NotificationCenter.post(error: error)
     }
     
     // MARK: - ASAuthorizationControllerPresentationContextProviding

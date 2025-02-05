@@ -27,6 +27,7 @@ struct FirestoreUserCollectionPathModifier: ViewModifier {
             .onDisappear {
                 controller.stopListeningToAuthChanges()
             }
+            
     }
 }
 
@@ -38,3 +39,21 @@ public extension View {
     }
 }
 
+struct OnReceiveFirebaseSignInWithAppleErrorNotificationModifier: ViewModifier {
+    
+    let completion: (Error) -> Void
+    
+    func body(content: Content) -> some View {
+        content
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.firebaseSignInWithAppleError)) { object in
+                guard let error = object.object as? Error else { return }
+                completion(error)
+            }
+    }
+}
+
+public extension View {
+    func onFirebaseSignInWithAppleError(_ completion: @escaping (Error) -> Void) -> some View {
+        modifier(OnReceiveFirebaseSignInWithAppleErrorNotificationModifier(completion: completion))
+    }
+}
