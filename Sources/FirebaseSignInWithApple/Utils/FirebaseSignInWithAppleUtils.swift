@@ -17,12 +17,10 @@ struct FirebaseSignInWithAppleUtils {
         do {
             let reference = Firestore.firestore().collection(path)
             try await reference.document(uid).getDocument()
-            print(#function, "User already exists in Firestore")
             return true
         } catch {
             if let error = error as NSError?, let code = FirestoreErrorCode.Code(rawValue: error.code) {
                 if code == .notFound {
-                    print(#function, "User does not exist in Firestore")
                     return false
                 } else {
                     throw error

@@ -18,7 +18,7 @@ public struct FirebaseDeleteAccountWithAppleButton<Label: View>: View {
     /// - Parameters:
     ///   - alertConfiguration: the configuratiuon for the alert that is shown when the button is tapped
     ///   - label: the button label
-    public init(alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration = FirebaseSignInWithAppleButtonAlertConfiguration(title: "Delete account", message: "This action cannot be undone. All your data will be deleted.\n\nThis is a security sensitive operation. If you have signed in for more than \(FirebaseSignInWithAppleConstants.reauthenticationIsRequiredAfterMinutes) minutes, you will be asked to sign in again before we can delete your account.\n\nAre you sure you want to delete your account?", confirmButtonTitle: "Confirm", cancelButtonTitle: "Cancel"),
+    public init(alertConfiguration: FirebaseSignInWithAppleButtonAlertConfiguration = FirebaseSignInWithAppleButtonAlertConfiguration(title: "Delete account", message: "This action cannot be undone. All your data will be deleted.\n\nThis is a security sensitive operation. You will be asked to sign in again before we can delete your account.\n\nAre you sure you want to delete your account?", confirmButtonTitle: "Confirm", cancelButtonTitle: "Cancel"),
                 @ViewBuilder label: @escaping () -> Label) {
         self.alertConfiguration = alertConfiguration
         self.label = label
