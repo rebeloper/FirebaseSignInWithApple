@@ -19,10 +19,12 @@ final public class FirebaseSignInWithAppleController: NSObject {
     public var previousState: FirebaseSignInWithAppleAuthState = .loading
     public var user: User?
     
+    /// Authenticates the user into Firebase Authentication with Sign in with Apple.
     public func authenticate() {
         continueWithApple(.createToken)
     }
     
+    /// Signs out the current user from Firebase Authentication.
     public func signOut() {
         do {
             try Auth.auth().signOut()
@@ -31,6 +33,8 @@ final public class FirebaseSignInWithAppleController: NSObject {
         }
     }
     
+    /// Deletes the current user from Firebase Authentication and revokes the Sign in with Apple token.
+    /// Make sure you remove all data associated to the user with this extension: https://extensions.dev/extensions/firebase/delete-user-data
     public func deleteAccount() {
         do {
             guard let user = Auth.auth().currentUser else {
@@ -92,25 +96,6 @@ final public class FirebaseSignInWithAppleController: NSObject {
         }
     }
     
-    private func saveProfileIfNeeded(_ user: User, path: String) {
-        Task {
-            do {
-                let isUserAlreadyInFirestore = try await FirebaseSignInWithAppleUtils.isUserAlreadyInFirestore(path: path, uid: user.uid)
-                if isUserAlreadyInFirestore {
-                    self.state = .authenticated
-                } else {
-                    try await saveProfile(user, path: path)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.state = .authenticated
-                    }
-                }
-            } catch {
-                self.state = .notAuthenticated
-                NotificationCenter.post(error: error)
-            }
-        }
-    }
-    
     func stopListeningToAuthChanges() {
         guard authStateHandler != nil else { return }
         Auth.auth().removeStateDidChangeListener(authStateHandler!)
@@ -129,7 +114,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
         switch operationType {
         case .createToken:
             guard let nonce = currentNonce else {
-                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+                fatalError("Failed to obtain a nonce.")
             }
             guard let appleIDToken = appleIDCredential.identityToken else {
                 throw FirebaseSignInWithAppleError.noIdentityToken
@@ -144,7 +129,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
                 throw FirebaseSignInWithAppleError.noCurrentUser
             }
             guard let nonce = currentNonce else {
-                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+                fatalError("Failed to obtain a nonce.")
             }
             guard let appleIDToken = appleIDCredential.identityToken else {
                 throw FirebaseSignInWithAppleError.noIdentityToken
@@ -167,9 +152,27 @@ final public class FirebaseSignInWithAppleController: NSObject {
     private var authStateHandler: AuthStateDidChangeListenerHandle?
     private var appleIDCredential: ASAuthorizationAppleIDCredential?
     
+    private func saveProfileIfNeeded(_ user: User, path: String) {
+        Task {
+            do {
+                let isUserAlreadyInFirestore = try await FirebaseSignInWithAppleUtils.isUserAlreadyInFirestore(path: path, uid: user.uid)
+                if isUserAlreadyInFirestore {
+                    self.state = .authenticated
+                } else {
+                    try await saveProfile(user, path: path)
+                    try await Task.sleep(for: .seconds(1), tolerance: .seconds(1))
+                    self.state = .authenticated
+                }
+            } catch {
+                self.state = .notAuthenticated
+                NotificationCenter.post(error: error)
+            }
+        }
+    }
+    
     private func saveProfile(_ user: User, path: String) async throws {
         let reference = Firestore.firestore().collection(path).document(user.uid)
-        try await reference.setData(["userId" : user.uid])
+        try await reference.setData([FirebaseSignInWithAppleConstants.userIdKey : user.uid])
     }
     
     private func signInToFirebase(idTokenString: String, nonce: String) async throws {
