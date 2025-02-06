@@ -169,7 +169,7 @@ final public class FirebaseSignInWithAppleController: NSObject {
     
     private func saveProfile(_ user: User, path: String) async throws {
         let reference = Firestore.firestore().collection(path).document(user.uid)
-        try await reference.setData(["userUid" : user.uid])
+        try await reference.setData(["userId" : user.uid])
     }
     
     private func signInToFirebase(idTokenString: String, nonce: String) async throws {
