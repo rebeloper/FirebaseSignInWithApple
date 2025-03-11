@@ -10,6 +10,7 @@ import AuthenticationServices
 import FirebaseAuth
 import FirebaseFirestore
 
+@MainActor
 @Observable
 final public class FirebaseSignInWithAppleController: NSObject {
     

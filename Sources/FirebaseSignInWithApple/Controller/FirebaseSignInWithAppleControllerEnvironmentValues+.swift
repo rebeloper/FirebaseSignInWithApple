@@ -1,5 +1,5 @@
 //
-//  EnvironmentValues+FirebaseAuthController.swift
+//  FirebaseSignInWithAppleControllerEnvironmentValues+.swift
 //
 //
 //  Created by Alex Nagy on 08.05.2024.
