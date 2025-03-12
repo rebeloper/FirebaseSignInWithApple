@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+public struct FirebaseSignInWithAppleKey: EnvironmentKey {
+    @MainActor
+    public static var defaultValue = FirebaseSignInWithAppleController()
+}
+
 public extension EnvironmentValues {
-    @Entry var firebaseSignInWithApple = FirebaseSignInWithAppleController()
+    @MainActor
+    var firebaseSignInWithApple: FirebaseSignInWithAppleController {
+        get { self[FirebaseSignInWithAppleKey.self] }
+        set { self[FirebaseSignInWithAppleKey.self] = newValue }
+    }
 }
