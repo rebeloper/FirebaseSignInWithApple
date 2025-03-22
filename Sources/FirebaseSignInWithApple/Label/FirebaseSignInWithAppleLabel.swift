@@ -43,7 +43,7 @@ public struct FirebaseSignInWithAppleLabel: View {
             .buttonStyle(.plain)
             .padding(.vertical, 14)
             .padding(.horizontal, 18)
-            .foregroundColor(.white)
+            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
             .background(colorScheme == .dark ? Color.white : Color.black)
             .cornerRadius(9)
             .multilineTextAlignment(.leading)
