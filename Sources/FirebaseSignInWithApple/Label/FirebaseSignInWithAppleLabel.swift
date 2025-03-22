@@ -9,7 +9,9 @@ import SwiftUI
 
 public struct FirebaseSignInWithAppleLabel: View {
     
+    @Environment(\.colorScheme) var colorScheme
     private let title: String
+//    private let backgroundColor: Color
     
     /// Sign in with Apple label
     /// - Parameter title: title
@@ -41,8 +43,8 @@ public struct FirebaseSignInWithAppleLabel: View {
             .buttonStyle(.plain)
             .padding(.vertical, 14)
             .padding(.horizontal, 18)
-            .foregroundColor(.white)
-            .background(.black)
+            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+            .background(colorScheme == .dark ? Color.white : Color.black)
             .cornerRadius(9)
             .multilineTextAlignment(.leading)
     }
