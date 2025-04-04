@@ -33,8 +33,18 @@ public extension NotificationCenter {
             case .credentialExport:
                 message = "The credential could not be exported."
             @unknown default:
-                message = "An unknown error occurred."
-            }
+                if #available(iOS 17.0, *) {
+                    switch error.code {
+                    case .credentialImport:
+                        message = "The credential could not be imported."
+                    case .credentialExport:
+                        message = "The credential could not be exported."
+                    default:
+                        message = "An unknown error occurred."
+                    }
+                } else {
+                    message = "An unknown error occurred."
+                }
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: Notification.Name.firebaseSignInWithAppleError, object: message)
             }
