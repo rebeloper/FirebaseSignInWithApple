@@ -14,7 +14,7 @@ public extension NotificationCenter {
         if let error = error as? ASAuthorizationError {
             var message: String = ""
             switch error.code {
-                case .canceled:
+            case .canceled:
                 message = "User canceled sign-in."
             case .unknown:
                 message = "An unknown error occurred."
@@ -28,10 +28,6 @@ public extension NotificationCenter {
                 message = "The authorization request could not be completed interactively."
             case .matchedExcludedCredential:
                 message = "The credential was previously rejected."
-            case .credentialImport:
-                message = "The credential could not be imported."
-            case .credentialExport:
-                message = "The credential could not be exported."
             @unknown default:
                 if #available(iOS 17.0, *) {
                     switch error.code {
@@ -45,14 +41,15 @@ public extension NotificationCenter {
                 } else {
                     message = "An unknown error occurred."
                 }
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name.firebaseSignInWithAppleError, object: message)
+            
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name.firebaseSignInWithAppleError, object: message)
+                }
             }
         } else {
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: Notification.Name.firebaseSignInWithAppleError, object: error.localizedDescription)
             }
         }
-        
     }
 }
