@@ -1,5 +1,5 @@
 {
-  "originHash" : "a5f65a939df4eeace4deb70e756014a18f21f36436b51930f3a8b797e6704b76",
+  "originHash" : "61dcadf5f98ee2ccbbe4a2d03948795313d92907d239f78368c67b42fa42301e",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "b9bf3adac18e6e3059167194aeb632f15a5ba4b2",
-        "version" : "12.1.0"
+        "revision" : "45210bd1ea695779e6de016ab00fea8c0b7eb2ef",
+        "version" : "12.7.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "e15f979c3eaf477d24e5bfec9d87f1d76fbac297",
-        "version" : "2.2.0"
+        "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
+        "version" : "3.2.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "883305109ead4599e4ca59591754ee72e81e6b5e",
-        "version" : "12.1.0"
+        "revision" : "c2d59acf17a8ba7ed80a763593c67c9c7c006ad1",
+        "version" : "12.5.0"
       }
     },
     {
